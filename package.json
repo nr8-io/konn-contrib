@@ -1,0 +1,8 @@
+{
+	"name": "konn-contrib",
+	"version": "1.0.0",
+	"devDependencies": {
+		"k8s-libsonnet": "github:nr8-io/k8s-libsonnet",
+		"konn": "github:nr8-io/konn"
+	}
+}

@@ -1,0 +1,18 @@
+{
+  "lockfileVersion": 1,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "konn-contrib",
+      "devDependencies": {
+        "k8s-libsonnet": "github:nr8-io/k8s-libsonnet",
+        "konn": "github:nr8-io/konn",
+      },
+    },
+  },
+  "packages": {
+    "k8s-libsonnet": ["k8s-libsonnet@github:nr8-io/k8s-libsonnet#4202299", {}, "nr8-io-k8s-libsonnet-4202299"],
+
+    "konn": ["konn@github:nr8-io/konn#269d8c3", {}, "nr8-io-konn-269d8c3"],
+  }
+}
