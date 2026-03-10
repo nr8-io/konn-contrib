@@ -30,7 +30,7 @@ k.manifest(function(ctx, props) [
 
         ports: [
           {
-            type: k.get(config, 'protocol', 'TCP'),
+            protocol: k.get(config, 'protocol', 'TCP'),
             port: config.port,
           }
           + k.onlyIfHas(config, 'targetPort', {
