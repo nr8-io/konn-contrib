@@ -16,9 +16,8 @@ k.manifest(function(ctx, props) [
         + k.onlyIfHas(cert.value, 'hosts', cert.value.hosts, []),
       secret: {
         name: cert.key + '-tls',
-      } + k.onlyIfHas(cert.value, 'namespace', {
         namespace: cert.value.namespace,
-      }),
+      },
     },
   }
   for cert in std.objectKeysValues(props.certificates)
