@@ -37,7 +37,7 @@ local parseEnv = function(value) (
     }
   )
   else (
-    value
+    std.toString(value)
   )
 );
 
