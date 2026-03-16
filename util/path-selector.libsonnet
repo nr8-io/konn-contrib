@@ -1,6 +1,6 @@
 local k = import 'konn/main.libsonnet';
 
-function(path, pos=null, separator='/') (
+local parse = function(path, pos=null, separator='/') (
   // magic to support values inside of []
   local sections = std.split(std.strReplace(std.strReplace(separator + path, '[', '%{'), ']', '}%'), '%');
 
@@ -32,4 +32,35 @@ function(path, pos=null, separator='/') (
   ) else (
     result
   )
-)
+);
+
+local contains = function(pathOrPaths, name, index=0) (
+  local paths = if std.isArray(pathOrPaths) then pathOrPaths else [pathOrPaths];
+
+  local targets = std.flatMap(function(path) (
+    parse(path, index)
+  ), paths);
+
+  std.contains(targets, name)
+);
+
+local isEmpty = function(selectors=[], index=0) (
+  local targets = std.flatMap(function(path) (
+    parse(path, index)
+  ), selectors);
+
+  std.length(targets) == 0
+);
+
+local isTarget = function(pathOrPaths, deployment, container) (
+  local paths = if std.isArray(pathOrPaths) then pathOrPaths else [pathOrPaths];
+
+  contains(paths, deployment, 0) && (contains(paths, container, 1) || isEmpty(paths, 1))
+);
+
+{
+  parse: parse,
+  contains: contains,
+  isEmpty: isEmpty,
+  isTarget: isTarget,
+}

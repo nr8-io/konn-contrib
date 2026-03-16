@@ -1,35 +1,12 @@
 local selector = import '../../util/path-selector.libsonnet';
 local k = import 'konn/main.libsonnet';
 
-// helper function to check if a name is in the list of selectors for a given position
-local contains = function(selectors, name, index=0) (
-  local targets = std.flatMap(function(path) (
-    selector(path, index)
-  ), selectors);
-
-  std.contains(targets, name)
-);
-
-// helper function to check if there are no selectors for a given position (i.e. selector is empty, meaning it matches all)
-local isEmpty = function(selectors, index=0) (
-  local targets = std.flatMap(function(path) (
-    selector(path, index)
-  ), selectors);
-
-  std.length(targets) == 0
-);
-
-// check if a given volume mount selector matches the deployment and container
-local isTarget = function(key, deployment, container) (
-  contains([key], deployment, 0) && (contains([key], container, 1) || isEmpty([key], 1))
-);
-
 local parseVolume = function(key, value={}) (
-  local path = selector(key);  // parse selector into path segments
+  local parts = selector.parse(key);  // parse selector into path segments
 
   // get the volume type and name from the selector, defaulting to PVC and volume name if not specified
-  local type = std.asciiLower(if std.length(path) > 1 then path[0][0] else 'pvc');
-  local name = std.asciiLower(if std.length(path) > 1 then path[1][0] else path[0][0]);
+  local type = std.asciiLower(if std.length(parts) > 1 then parts[0][0] else 'pvc');
+  local name = std.asciiLower(if std.length(parts) > 1 then parts[1][0] else parts[0][0]);
 
   {
     name: name,
@@ -127,7 +104,7 @@ k.extension(
                 std.flatMap(
                   // map over mounts in the volume config to check if they match the selector
                   function(mount) (
-                    local shouldMount = isTarget(mount.key, config.metadata.name, container.name);
+                    local shouldMount = selector.isTarget(mount.key, config.metadata.name, container.name);
 
                     // only add the volume mount if the selector matches the deployment and container
                     k.onlyIfArr(shouldMount, parseMount(volume.name, mount.value))
@@ -143,7 +120,7 @@ k.extension(
           volumes+: [
             parseVolume(item.key, item.value)
             for item in std.objectKeysValues(props.mounts)
-            if contains(std.objectFields(item.value), config.metadata.name, 0)
+            if selector.contains(std.objectFields(item.value), config.metadata.name, 0)
           ],
         },
       },
