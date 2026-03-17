@@ -47,20 +47,29 @@ k.manifest(function(ctx, props) [
     name=config.key,
     replicas=k.get(config.value, 'replicas', 1),
     containers=[
+      // container defaults
       container.new(
         name=item.key,
         image=k.get(item.value, 'image', 'busybox'),
       ) + {
-        imagePullPolicy: 'IfNotPresent',
+        // change default image pull policy to IfNotPresent to avoid unnecessary pulls instead of Always which is the default in Kubernetes
+        imagePullPolicy: k.get(item.value, 'imagePullPolicy', 'IfNotPresent'),
       }
 
       // parse env config with support for simplified syntax for secrets and config maps
-      + k.onlyIfHas(item.value, 'env', container.withEnvMap(
-        {
-          [env.key]: parseEnv(env.value)
-          for env in std.objectKeysValues(item.value.env)
-        }
-      ))
+      + k.onlyIfHas(item.value, 'env', container.withEnvMap({
+        [env.key]: parseEnv(env.value)
+        for env in std.objectKeysValues(item.value.env)
+      }))
+
+      // apply other container properties, excluding properties which are handled separately with special parsing logic
+      + {
+        [item.key]: item.value
+        for item in std.objectKeysValues(config.value.containers)
+        if !std.contains(['env'], item.key)
+      }
+
+      // add containers for each key provided
       for item in std.objectKeysValues(config.value.containers)
     ]
   )
