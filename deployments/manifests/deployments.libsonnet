@@ -65,7 +65,7 @@ k.manifest(function(ctx, props) [
       // apply other container properties, excluding properties which are handled separately with special parsing logic
       + {
         [item.key]: item.value
-        for item in std.objectKeysValues(config.value.containers)
+        for item in std.objectKeysValues(item.value)
         if !std.contains(['env'], item.key)
       }
 
