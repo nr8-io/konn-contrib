@@ -22,7 +22,7 @@ k.manifest(function(ctx, props) [
         storageClassName: volume.value.type,
       })
       + k.onlyIfHas(volume.value, 'accessMode', {
-        accessModes: [volume.value.access],
+        accessModes: [volume.value.accessMode],
       })
       + k.onlyIfHas(volume.value, 'accessModes', {
         accessModes: volume.value.accessModes,
