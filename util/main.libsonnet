@@ -13,8 +13,16 @@ local getFirstNonNull = function(target, paths=[], default=null) (
   if std.length(result) > 0 then k.get(target, result[0]) else default
 );
 
+local getKeysValues = function(objOrArray) (
+  if std.isArray(objOrArray) then
+    std.mapWithIndex(function(i, item) { key: i, value: item }, objOrArray)
+  else
+    std.objectKeysValues(objOrArray)
+);
+
 {
-  pathSelector: pathSelector,
-  objectHasOneOf: objectHasOneOf,
   getFirstNonNull: getFirstNonNull,
+  getKeysValues: getKeysValues,
+  objectHasOneOf: objectHasOneOf,
+  pathSelector: pathSelector,
 }

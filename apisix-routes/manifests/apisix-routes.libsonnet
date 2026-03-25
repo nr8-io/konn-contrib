@@ -1,3 +1,4 @@
+local util = import '../../util/main.libsonnet';
 local k = import 'konn/main.libsonnet';
 
 // simplified ApisixRoute configuration for basic HTTP routing, without upstreams or plugins
@@ -9,7 +10,9 @@ k.manifest(function(ctx, props) [
       name: route.key,
     },
     spec: {
-      http: std.mapWithIndex(function(i, backend) (
+      http: std.mapWithIndex(function(i, item) (
+        local backend = item.value;
+
         {
           // can be provided as ApisixRoute spec or simplified with top-level fields (host/hosts, path/paths, method/methods)
           backends: k.onlyIfHas(backend, 'backends', backend.backends, [
@@ -57,7 +60,7 @@ k.manifest(function(ctx, props) [
             })
           ),
           // name is optional, will default to route key + index if not provided
-          name: k.onlyIfHas(backend, 'name', backend.name, route.key + '-' + std.toString(i)),
+          name: k.onlyIfHas(backend, 'name', backend.name, route.key + '-' + std.toString(item.key)),
         }
         // plugin config name and namespace (defaults to 'casdoor' if plugin is specified without namespace)
         + k.onlyIfHas(backend, 'plugin', {
@@ -84,7 +87,7 @@ k.manifest(function(ctx, props) [
         + k.onlyIfHas(backend, 'timeout', {
           timeout: backend.timeout,
         })
-      ), route.value),
+      ), util.getKeysValues(route.value)),
     },
   }
   for route in std.objectKeysValues(props.routes)
