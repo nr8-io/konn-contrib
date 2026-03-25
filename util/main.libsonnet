@@ -15,7 +15,7 @@ local getFirstNonNull = function(target, paths=[], default=null) (
 
 local getKeysValues = function(objOrArray) (
   if std.isArray(objOrArray) then
-    std.mapWithIndex(function(i, item) { key: i, value: item }, objOrArray)
+    std.mapWithIndex(function(i, item) { key: std.toString(i), value: item }, objOrArray)
   else
     std.objectKeysValues(objOrArray)
 );
