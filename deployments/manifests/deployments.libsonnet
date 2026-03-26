@@ -1,6 +1,8 @@
 local k = import 'konn/main.libsonnet';
 local k8s = (import 'k8s-libsonnet/1.35/main.libsonnet');
 local util = import '../../util/main.libsonnet';
+local withAffinityMixin = import '../../affinity/mixins/with-affinity.libsonnet';
+local withVolumeMountsMixin = import '../../volume-mounts/mixins/with-volume-mounts.libsonnet';
 local container = k8s.core.v1.container;
 
 // parse key:value into env name and key for secrets and config maps, e.g. "secretName:secretKey" or "configMapName:configKey"
@@ -73,6 +75,9 @@ k.manifest(function(ctx, props) [
       for item in std.objectKeysValues(config.value.containers)
     ]
   )
+
+  + k.onlyIfHas(config.value, 'affinity', withAffinityMixin(config.value.affinity))
+  + k.onlyIfHas(config.value, 'volumes', withVolumeMountsMixin(config.value.volumes))
   for config in std.objectKeysValues(props.deployments)
 ], {
   deployments: {},
