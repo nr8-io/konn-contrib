@@ -7,7 +7,7 @@ k.manifest(function(ctx, props) [
     name=config.key,
     data={
       local values = k.get(props.values, '.[' + config.key + '][' + item.key + ']'),
-      [item.key]: if std.isObject(values) then k.trace(k.template(item.value, values)) else item.value
+      [item.key]: if std.isObject(values) then k.template(item.value, values) else item.value
       for item in std.objectKeysValues(config.value)
     }
   )

@@ -122,7 +122,7 @@ local podAffinityPreferredAnyOf = function(anyOf) [
 
 // patch deployment/statefulset/daemonset configs with affinity rules based on simplified config from props
 function(affinity={}) {
-  local node = k.get(k.trace(affinity), 'node', {}),  // node affinity config
+  local node = k.get(affinity, 'node', {}),  // node affinity config
   local pod = k.get(affinity, 'pod', {}),  // pod affinity
 
   spec+: {
