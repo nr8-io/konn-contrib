@@ -270,6 +270,28 @@ function(affinity={}) {
                 + k.onlyIfArr(std.length(anyOf) > 0, podAffinityPreferredAnyOf(anyOf)),
             },
           },
+        })
+
+
+        // topology spread constraints for simple key-value pairs in spread
+        + k.onlyIfHas(affinity, 'spread', {
+          topologySpreadConstraints+: [
+            (
+              {
+                maxSkew: k.get(item.value, '$skew', 1),
+                topologyKey: item.key,
+                whenUnsatisfiable: if k.get(item.value, '$strict', true) then 'DoNotSchedule' else 'ScheduleAnyway',
+                labelSelector: {
+                  matchExpressions: matchExpressions(item.value),
+                },
+              }
+              // optional minDomains
+              + k.onlyIfHas(item.value, '$min', {
+                minDomains: item.value['$min'],
+              })
+            )
+            for item in util.getKeysValues(affinity.spread)
+          ],
         }),
     },
   },
