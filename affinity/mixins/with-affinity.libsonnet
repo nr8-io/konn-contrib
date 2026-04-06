@@ -280,7 +280,7 @@ function(affinity={}) {
               {
                 maxSkew: k.get(item.value, '$skew', 1),
                 topologyKey: item.key,
-                whenUnsatisfiable: if k.get(item.value, '$strict', true) then 'DoNotSchedule' else 'ScheduleAnyway',
+                whenUnsatisfiable: if k.get(item.value, '$strict', false) then 'DoNotSchedule' else 'ScheduleAnyway',
                 labelSelector: {
                   matchExpressions: matchExpressions(item.value),
                 },
