@@ -13,9 +13,10 @@ local getFirstNonNull = function(target, paths=[], default=null) (
   if std.length(result) > 0 then k.get(target, result[0]) else default
 );
 
-local getKeysValues = function(objOrArray) (
+// toString forces array keys to be strings, which is useful for some use cases
+local getKeysValues = function(objOrArray, toString=false) (
   if std.isArray(objOrArray) then
-    std.mapWithIndex(function(i, item) { key: std.toString(i), value: item }, objOrArray)
+    std.mapWithIndex(function(i, item) { key: if toString then std.toString(i) else i, value: item }, objOrArray)
   else
     std.objectKeysValues(objOrArray)
 );

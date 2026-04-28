@@ -115,7 +115,7 @@ function(volumes={}, name=null) {
                     parseMount(volume.name, mount.value)
                   ))
                 ),
-                util.getKeysValues(item.value)  // mount targets, selector/paths or array of paths
+                util.getKeysValues(item.value, toString=true)  // mount targets, selector/paths or array of paths
               )
             ),
             std.objectKeysValues(volumes)  // volume selectors

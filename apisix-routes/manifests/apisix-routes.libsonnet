@@ -87,7 +87,7 @@ k.manifest(function(ctx, props) [
         + k.onlyIfHas(backend, 'timeout', {
           timeout: backend.timeout,
         })
-      ), util.getKeysValues(route.value)),
+      ), util.getKeysValues(route.value, toString=true)),
     },
   }
   for route in std.objectKeysValues(props.routes)

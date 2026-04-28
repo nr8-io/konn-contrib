@@ -62,7 +62,7 @@ local matchExpressions = function(items, key=null) (
       }
       + withValues(value)
     )
-    for item in util.getKeysValues(items)
+    for item in util.getKeysValues(items, toString=true)
     if !std.startsWith(item.key, '$')
   ]
 );
@@ -102,7 +102,7 @@ local podAffinityRequiredAnyOf = function(anyOf) [
   (
     podAffinityTerm(item.value, if std.isObject(anyOf) then item.key)
   )
-  for item in util.getKeysValues(anyOf)
+  for item in util.getKeysValues(anyOf, toString=true)
 ];
 
 local podAffinityPreferredAllOf = function(allOf) [
@@ -117,7 +117,7 @@ local podAffinityPreferredAnyOf = function(anyOf) [
     weight: k.get(item.value, '$weight', 100),  // allow for an optional weight field to be set on the anyOf selector, defaulting to 1 if not set
     podAffinityTerm: podAffinityTerm(item.value, if std.isObject(anyOf) then item.key),
   }
-  for item in util.getKeysValues(anyOf)
+  for item in util.getKeysValues(anyOf, toString=true)
 ];
 
 // patch deployment/statefulset/daemonset configs with affinity rules based on simplified config from props
@@ -135,7 +135,7 @@ function(affinity={}) {
 
           nodeSelector+: {
             [k.get(item.value, 'key', item.key)]: k.get(item.value, 'value', item.value)
-            for item in util.getKeysValues(allOf)
+            for item in util.getKeysValues(allOf, toString=true)
             if std.isString(k.get(item.value, 'value', item.value))
           },
         })
@@ -144,7 +144,7 @@ function(affinity={}) {
         + k.onlyIfHas(node, 'require', (
           local allOf = {
             [item.key]: item.value
-            for item in util.getKeysValues(getAllOf(node.require))
+            for item in util.getKeysValues(getAllOf(node.require), toString=true)
             if !std.isString(k.get(item.value, 'value', item.value))
           };
 
@@ -173,7 +173,7 @@ function(affinity={}) {
                           if std.isArray(anyOf) then item.value else { [item.key]: item.value },
                         ),
                       }
-                      for item in util.getKeysValues(anyOf)
+                      for item in util.getKeysValues(anyOf, toString=true)
                     ],
                   }),
               },
@@ -210,7 +210,7 @@ function(affinity={}) {
                       ),
                     },
                   }
-                  for item in util.getKeysValues(node.prefer)
+                  for item in util.getKeysValues(node.prefer, toString=true)
                 ]),
             },
           },
@@ -290,7 +290,7 @@ function(affinity={}) {
                 minDomains: item.value['$min'],
               })
             )
-            for item in util.getKeysValues(affinity.spread)
+            for item in util.getKeysValues(affinity.spread, toString=true)
           ],
         }),
     },
