@@ -1,0 +1,23 @@
+apiVersion: policies.kyverno.io/v1
+kind: NamespacedValidatingPolicy
+metadata:
+  name: "%(name)s-restrict-workflows"
+  namespace: "%(namespace)s"
+spec:
+  validationActions:
+    - Deny
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [ "argoproj.io" ]
+        apiVersions: [ "v1alpha1" ]
+        operations: [ "CREATE" ]
+        resources: [ "workflows" ]
+  matchConditions:
+    - name: "argo-wf-user"
+      expression: >
+        request.userInfo.username == "system:serviceaccount:%(namespace)s:%(name)s"
+  validations:
+    - expression: |
+        has(object.spec.workflowTemplateRef) && object.spec.workflowTemplateRef.name in %(workflowTemplates)s
+      messageExpression: >
+        "User " + request.userInfo.username + " is not allowed to create workflows with this template."

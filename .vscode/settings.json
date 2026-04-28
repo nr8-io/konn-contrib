@@ -1,5 +1,4 @@
 {
-	"jsonnet.languageServer.jpath": [
-		"./node_modules",
-	],
+	"jsonnet.languageServer.jpath": ["./node_modules"],
+	"cSpell.words": ["kyverno", "nvpol", "statefulsets"]
 }

@@ -1,0 +1,23 @@
+apiVersion: policies.kyverno.io/v1
+kind: NamespacedValidatingPolicy
+metadata:
+  name: "%(name)s-restrict-exec"
+  namespace: "%(namespace)s"
+spec:
+  validationActions:
+    - Deny
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [ "" ]
+        apiVersions: [ "v1" ]
+        operations: [ "CONNECT" ]
+        resources: [ "pods/exec" ]
+  matchConditions:
+    - name: "argo-wf-workflow"
+      expression: >
+        request.userInfo.username == "system:serviceaccount:%(namespace)s:%(name)s"
+  validations:
+    - expression: >
+        false
+      messageExpression: >
+        "User is not allowed to execute commands on this pod."

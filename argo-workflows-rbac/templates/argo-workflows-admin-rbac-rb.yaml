@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argo-wf-admin-user
+  namespace: "%(namespace)s"
+subjects:
+  - kind: ServiceAccount
+    name: argo-admin-user
+    namespace: argo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argo-wf-admin-user

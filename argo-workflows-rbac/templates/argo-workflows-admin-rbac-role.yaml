@@ -1,0 +1,32 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argo-wf-admin-user
+  namespace: "%(namespace)s"
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - events
+      - pods
+      - pods/log
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - eventsources
+      - sensors
+      - workflows
+      - workfloweventbindings
+      - workflowtemplates
+      - clusterworkflowtemplates
+      - cronworkflows
+      - workflowtaskresults
+    verbs:
+      - get
+      - list
+      - watch

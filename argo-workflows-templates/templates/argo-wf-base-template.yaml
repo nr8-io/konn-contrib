@@ -1,0 +1,7 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: "%(name)s"
+  namespace: "%(namespace)s"
+spec:
+  templates: []
