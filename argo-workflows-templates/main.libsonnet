@@ -1,4 +1,4 @@
-local util = import 'konn-contrib/util/main.libsonnet';
+local util = import '../util/main.libsonnet';
 local k = import 'konn/main.libsonnet';
 
 //
@@ -35,7 +35,7 @@ k.feature([
             {
               [item.key]: item.value
               for item in std.objectKeysValues(workflow.value)
-              if !std.contains(['rbac'], item.key)
+              if !std.contains(['rbac', 'script', 'container'], item.key)
             }
 
             // add service account to workflow spec if rbac config defined for this workflow
@@ -52,22 +52,38 @@ k.feature([
                   }
 
                   // add script template overrides
-                  + k.onlyIfHas(template.value, 'script', {
-                    script: transformScriptTemplate(template.value.script),
-                  })
+                  + k.onlyIfHas(template.value, 'script', transformScriptTemplate(template.value))
 
                   // add container template overrides
-                  + k.onlyIfHas(template.value, 'container', {
-                    container: transformContainerTemplate(template.value.container),
-                  })
+                  + k.onlyIfHas(template.value, 'container', transformContainerTemplate(template.value))
                 )
-                for template in util.getKeysValues(workflow.value.templates)
+                for template in util.getKeysValues(k.get(workflow.value, 'templates', {}))
               ],
             }
 
+            // single script template support
+            + k.onlyIfHas(workflow.value, 'script', {
+              templates: [
+                {
+                  name: useKey(workflow, 'name', prefix='template'),
+                }
+                + transformScriptTemplate(workflow.value),
+              ],
+            })
+
+            // single container template support
+            + k.onlyIfHas(workflow.value, 'container', {
+              templates: [
+                {
+                  name: useKey(workflow, 'name', prefix='template'),
+                }
+                + transformContainerTemplate(workflow.value),
+              ],
+            })
+
             // add default entrypoint if not defined in config for this workflow
             + k.onlyIf(!std.objectHas(workflow.value, 'entrypoint'), {
-              entrypoint: super.templates[0].name,
+              entrypoint: if std.length(super.templates) > 0 then super.templates[0].name else 'main',
             }),
         },
       ]
