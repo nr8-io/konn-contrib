@@ -29,7 +29,9 @@ k.manifest(function(ctx, props) [
             // http01 solver
             + k.onlyIfHas(config, 'http', [{
               http01: {
-                ingressClass: k.onlyIfHas(config.http, 'ingressClass', config.http.ingressClass, 'apisix'),
+                ingress: {
+                  ingressClassName: k.onlyIfHas(config.http, 'ingress', config.http.ingress, 'apisix'),
+                },
               },
             }], [])
             // cloudflare dns01 solver
