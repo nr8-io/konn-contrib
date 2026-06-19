@@ -76,8 +76,18 @@ k.manifest(function(ctx, props) [
     ]
   )
 
+  + k.onlyIfHas(config.value, '$.spec', {
+    spec+: config.value['$.spec'],
+  })
+
+  + k.onlyIfHas(config.value, '$.metadata', {
+    metadata+: config.value['$.metadata'],
+  })
+
+
   + k.onlyIfHas(config.value, 'affinity', withAffinityMixin(config.value.affinity))
   + k.onlyIfHas(config.value, 'volumes', withVolumeMountsMixin(config.value.volumes))
+
   for config in std.objectKeysValues(props.deployments)
 ], {
   deployments: {},
